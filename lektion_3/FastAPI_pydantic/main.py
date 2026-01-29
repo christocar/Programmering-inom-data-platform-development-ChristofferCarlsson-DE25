@@ -1,6 +1,7 @@
 from fastapi import FastAPI, status
 from typing import Union
-
+import requests
+from schema.fox import FoxSchema
 from schema.user import UserSchema, UserSchemaResponse
 
 userList: list[UserSchema] = [
@@ -31,3 +32,12 @@ def get_users() -> list[UserSchemaResponse]:
 def post_user(user: UserSchema) -> UserSchema:
     userList.append(user)
     return user
+
+@app.get("/fox", response_model=FoxSchema)
+def get_fox():
+    response = requests.get("https://randomfox.ca/floof/")
+    result_json = response.json()
+    
+    fox = FoxSchema(**result_json)
+    return fox
+
